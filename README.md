@@ -113,7 +113,8 @@ Jika Anda mengalami masalah, dan ingin men-debug, Anda dapat menggunakan opsi -d
 
 ```bash
 logrotate -d /etc/logrotate.d/httpd
-
+```
+```
 reading config file httpd
 Allocating hash table for state file, size 15360 B
 
@@ -134,7 +135,8 @@ Menggunakan pilihan opsi -v untuk mengaktifkan verbositas. Ini akan menampilkan 
 
 ```bash
 logrotate -v /etc/logrotate.d/httpd
-
+```
+```
 reading config file httpd
 Allocating hash table for state file, size 15360 B
 

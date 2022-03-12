@@ -30,7 +30,69 @@ Other       : Privileged access to your Linux system as root or via the sudo com
 Conventions : – requires given linux commands to be executed with root privileges either directly as a root user or by use of sudo command
               – requires given linux commands to be executed as a regular non-privileged user
 ```       
-       
+```bash
+sudo su
+```
+
 Logrotate membutuhkan progam cron untuk bekerja, kita tidak perlu melakukan install cron karena progam itu defaultnya sudah terinstall pada system. disni Install package `logrotate`.
 
 ```bash
+yum install logrotate -y
+```
+
+logrotate adalah alat yang berguna untuk administrator sistem yang ingin mengambil direktori /var/log di bawah kendali mereka.  Perintah logrotate dipanggil setiap hari oleh penjadwal cron dan membaca file-file berikut:
+
+- File konfigurasi logrotate /etc/logrotate.conf
+- File di direktori konfigurasi logrotate /etc/logrotate.d
+
+Sebagian besar layanan (server web Apache, postgreSQL, MySql, manajer desktop KDE, dll) yang diinstal pada sistem Anda membuat file konfigurasi untuk logrotate di /etc/logrotate.d.  Sebagai contoh, berikut adalah isi dari direktori /etc/logrotate.d:
+
+```bash
+ls /etc/logrotate.d
+httpd  apport  apt  dpkg  lxd  rsyslog  ufw  unattended-upgrades messages
+```
+
+Katakanlah kita menjalankan layanan bernama "httpd” yang membuat file log bernama “acess.log” di dalam direktori /var/log/httpd.  Untuk memasukkan file log “httpd” dalam rotasi log, pertama-tama kita harus membuat file konfigurasi logrotate dan kemudian menyalinnya ke direktori /etc/logrotate.d.
+
+```bash
+cd /etc/logrotate.d/ && ls -lahsZ
+```
+
+konfigurasi log access pada httpd file dengan text editor `vim` atau yang lainnya.
+
+```bash
+vi /etc/logrotate/httpd
+```
+
+file konfigurasi akan tampak seperti berikut
+
+```
+/var/log/httpd/*.log {
+
+    missingok
+    size 5M
+    rotate 7
+    daily
+    compress
+    delaycompress
+    notifempty
+    create 660 gethuk gethuk
+}
+```
+
+### Penjelasan
+```
+daily          : File log diputar setiap hari. 
+weekly         : File log dirotasi jika hari kerja saat ini kurang dari hari kerja rotasi terakhir atau jika lebih dari seminggu telah berlalu sejak rotasi    
+                 terakhir. Ini biasanya sama dengan memutar log pada hari pertama dalam seminggu, tetapi jika logrotate tidak dijalankan setiap malam, rotasi log 
+                 akan terjadi pada kesempatan valid pertama.
+monthly        : File log dirotasi saat logrotate pertama kali dijalankan dalam sebulan (biasanya pada hari pertama setiap bulan). 
+notifempty     : Jangan memutar log jika kosong (ini mengesampingkan opsi ifempty). 
+nocompress     : Versi lama file log tidak dikompresi. 
+delaycompress  : Tunda kompresi file log sebelumnya ke siklus rotasi berikutnya. Ini hanya berpengaruh bila digunakan dalam kombinasi dengan kompres. Ini dapat 
+                 digunakan ketika beberapa program tidak dapat diperintahkan untuk menutup file log-nya dan dengan demikian dapat terus menulis ke file log                        sebelumnya untuk beberapa waktu. 
+compress       : Versi lama file log dikompres dengan gzip secara default. 
+mail address   : Ketika log diputar keluar dari keberadaan, itu dikirimkan ke alamat. Jika tidak ada email yang harus dibuat oleh log tertentu, arahan nomail                      dapat digunakan.  
+missingok      : Jika file log tidak ada, lanjutkan ke yang berikutnya tanpa mengeluarkan pesan kesalahan. 
+size           : ukuran output
+```

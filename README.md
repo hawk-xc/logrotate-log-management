@@ -96,3 +96,60 @@ mail address   : Ketika log diputar keluar dari keberadaan, itu dikirimkan ke al
 missingok      : Jika file log tidak ada, lanjutkan ke yang berikutnya tanpa mengeluarkan pesan kesalahan. 
 size           : ukuran output
 ```
+
+[baca lebih lanjut mengenai penjelasan](https://linux.die.net/man/8/logrotate)
+
+
+# Advance usage
+
+Setelah logrotate diimplementasikan, penjadwal cron pada sistem Anda akan menjalankan perintah secara otomatis sehingga logrotate dapat melakukan tugasnya. Biasanya, pengguna tidak perlu menjalankan logrotate secara manual. Namun, logrotate masih dapat dijalankan secara manual di terminal dan memiliki beberapa opsi berbeda yang dapat Anda gunakan. Sebagian besar ini hanya bermuara pada pengujian konfigurasi yang telah Anda terapkan. Periksa contoh di bawah ini untuk melihat cara kerjanya. 
+
+Anda dapat bereksperimen dengan rotasi log (di luar tugas cron biasa) dengan memaksa eksekusi logrotate tanpa adanya file log untuk diputar. Untuk melakukannya, gunakan -fpilihan dan tentukan file konfigurasi yang ingin Anda gunakan.
+
+```bash
+logrotate -f /etc/logrotate.d/httpd
+```
+Jika Anda mengalami masalah, dan ingin men-debug, Anda dapat menggunakan opsi -d dengan logrotate . Ini akan mensimulasikan "uji coba" dan tidak benar-benar membuat perubahan apa pun. Sebaliknya, itu hanya akan menampilkan pesan debug untuk membantu pemecahan masalah. 
+
+```bash
+logrotate -d /etc/logrotate.d/httpd
+
+reading config file httpd
+Allocating hash table for state file, size 15360 B
+
+Handling 1 logs
+
+rotating pattern: /var/log/httpd/*.1  after 1 days (7 rotations)
+empty log files are not rotated, old logs are removed
+considering log /var/log/httpd/access_log.1
+  log does not need rotating (log is empty)considering log /var/log/httpd/access_log.1.1
+  log does not need rotating (log is empty)considering log /var/log/httpd/error_log.1
+  log does not need rotating (log is empty)considering log /var/log/httpd/error_log.1.1
+  log does not need rotating (log is empty)considering log /var/log/httpd/modsec_audit.log.1
+  log does not need rotating (log is empty)considering log /var/log/httpd/modsec_audit.log.1.1
+  log does not need rotating (log is empty)considering log /var/log/httpd/modsec_debug.log.1
+```
+
+Menggunakan pilihan opsi -v untuk mengaktifkan verbositas. Ini akan menampilkan pesan selama rotasi sehingga Anda dapat melihat dengan tepat apa yang terjadi. 
+
+```bash
+logrotate -v /etc/logrotate.d/httpd
+
+reading config file httpd
+Allocating hash table for state file, size 15360 B
+
+Handling 1 logs
+
+rotating pattern: /var/log/httpd/*.1  after 1 days (7 rotations)
+empty log files are not rotated, old logs are removed
+considering log /var/log/httpd/access_log.1
+  log does not need rotating (log is empty)considering log /var/log/httpd/access_log.1.1
+  log does not need rotating (log is empty)considering log /var/log/httpd/error_log.1
+  log does not need rotating (log is empty)considering log /var/log/httpd/error_log.1.1
+  log does not need rotating (log is empty)considering log /var/log/httpd/modsec_audit.log.1
+  log does not need rotating (log is empty)considering log /var/log/httpd/modsec_audit.log.1.1
+  log does not need rotating (log is empty)considering log /var/log/httpd/modsec_debug.log.1
+  log does not need rotating (log is empty)set default create context
+```
+
+Dalam tutorial ini, kita belajar tentang logrotate di Linux, dan bagaimana itu digunakan untuk menjaga /var/logfile direktori di bawah kendali. Kami juga melihat cara mengatur logrotate untuk mengelola file log dari layanan kustom yang kami terapkan. Meskipun logrotate sebagian besar merupakan perintah yang bekerja di belakang layar, dipanggil secara diam-diam di cron, administrator sistem dapat memanfaatkan kekuatannya untuk menjaga file log mereka sendiri lebih teratur dan mudah dikelola. 
